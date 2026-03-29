@@ -95,11 +95,11 @@ public class BetterJoinPlugin extends JavaPlugin {
             PlayerRef ref = e.getPlayerRef();
             if (ref.isValid()) {
                 String message = playerNotExists.get() ? Config.getConfig().getWelcomeMessage() : Config.getConfig().getJoinMessage();
-                message = message.replace("{player}", ref.getUsername()).replaceAll("[&§]([0-9a-fk-or])", "");
+                message = message.replace("{player}", ref.getUsername());
                 if (Config.getConfig().isUseTitles()) {
-                    splitAndSendTitle(message);
+                    splitAndSendTitle(message.replaceAll("[&§]([0-9a-fk-or])", ""));
                 } else {
-                    Universe.get().sendMessage(Colors.formatColorCodes(message.replace("{player}", ref.getUsername())));
+                    Universe.get().sendMessage(Colors.formatColorCodes(message));
                 }
             }
         }, 1, TimeUnit.SECONDS));
@@ -107,11 +107,11 @@ public class BetterJoinPlugin extends JavaPlugin {
 
     private void onPlayerDisconnect(PlayerDisconnectEvent e) {
         if (e.getDisconnectReason().getClientDisconnectType() != null) {
-            String message = Config.getConfig().getLeaveMessage().replace("{player}", e.getPlayerRef().getUsername()).replaceAll("[&§]([0-9a-fk-or])", "");
+            String message = Config.getConfig().getLeaveMessage().replace("{player}", e.getPlayerRef().getUsername());
             if (Config.getConfig().isUseTitles()) {
-                splitAndSendTitle(message);
+                splitAndSendTitle(message.replaceAll("[&§]([0-9a-fk-or])", ""));
             } else {
-                Universe.get().sendMessage(Colors.formatColorCodes(message.replace("{player}", e.getPlayerRef().getUsername())));
+                Universe.get().sendMessage(Colors.formatColorCodes(message));
             }
         }
     }
