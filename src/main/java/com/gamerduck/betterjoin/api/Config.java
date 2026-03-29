@@ -72,10 +72,10 @@ public class Config {
         CODEC = builderBase.build();
     }
 
-    private String welcomeMessage = "A new player has joined!\n{player}";
-    private String joinMessage = "Someone joined the game\n{player}";
-    private String leaveMessage = "Someone left the game\n{player}";
-    private boolean useTitles = true;
+    private String welcomeMessage = "&6A new player has joined! Welcome &e{player}";
+    private String joinMessage = "&a+&f {player}";
+    private String leaveMessage = "&c-&f {player}";
+    private boolean useTitles = false;
     private boolean disableJoinMessages = true;
     private boolean disableLeaveMessages = true;
     private String messageReloaded = "&aConfiguration reloaded successfully!";
