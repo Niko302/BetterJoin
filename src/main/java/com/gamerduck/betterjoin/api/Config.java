@@ -118,15 +118,8 @@ public class Config {
     }
 
     public static CompletableFuture<Void> initialize(JavaPlugin plugin, com.hypixel.hytale.server.core.util.Config<Config> config) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                createOrUpdateConfig(plugin);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Config.config = config;
-            return null;
-        });
+        Config.config = config;
+        return CompletableFuture.completedFuture(null);
     }
 
     public static void reloadConfig(JavaPlugin plugin) throws IOException {

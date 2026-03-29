@@ -38,6 +38,8 @@ public class BetterJoinPlugin extends JavaPlugin {
 
     public BetterJoinPlugin(@Nonnull JavaPluginInit init) throws IOException {
         super(init);
+            // Must create/update config file BEFORE withConfig() triggers a framework read
+            Config.createOrUpdateConfig(this);
             Config.initialize(this, this.withConfig("config", Config.CODEC))
                     .thenRun(() -> {
                         // TODO - Make the disabled jar a configuration value, for now have people manually rename
