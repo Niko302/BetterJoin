@@ -76,7 +76,11 @@ public class BetterJoinPlugin extends JavaPlugin {
     protected void setup() {
         this.getCommandRegistry().registerCommand(new ReloadCommand(this));
 
-        this.getEventRegistry().registerGlobal(AddPlayerToWorldEvent.class, e -> e.setBroadcastJoinMessage(!Config.getConfig().isDisableJoinMessages()));
+        this.getEventRegistry().registerGlobal(AddPlayerToWorldEvent.class, e -> {
+            if (Config.getConfig().isDisableJoinMessages()) {
+                e.setJoinMessage(null); // null message = skip broadcast in World.onFinishPlayerJoining
+            }
+        });
         this.getEventRegistry().registerGlobal(PlayerConnectEvent.class, this::onPlayerConnect);
         this.getEventRegistry().registerGlobal(PlayerDisconnectEvent.class, this::onPlayerDisconnect);
 
