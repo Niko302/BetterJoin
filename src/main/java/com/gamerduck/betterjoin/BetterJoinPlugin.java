@@ -26,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BetterJoinPlugin extends JavaPlugin {
 
@@ -89,12 +88,13 @@ public class BetterJoinPlugin extends JavaPlugin {
     }
 
     private void onPlayerConnect(PlayerConnectEvent e) {
-        Path playerPath = playersData.resolve(e.getPlayerRef().getUuid() + ".json");
-        AtomicBoolean playerNotExists = new AtomicBoolean(Files.notExists(playerPath));
+        PlayerRef ref = e.getPlayerRef();
+        Path playerPath = playersData.resolve(ref.getUuid() + ".json");
         this.getTaskRegistry().registerTask(schedule(() -> {
-            PlayerRef ref = e.getPlayerRef();
+            // File check moved here — off the event thread
+            boolean playerNotExists = Files.notExists(playerPath);
             if (ref.isValid()) {
-                String message = playerNotExists.get() ? Config.getConfig().getWelcomeMessage() : Config.getConfig().getJoinMessage();
+                String message = playerNotExists ? Config.getConfig().getWelcomeMessage() : Config.getConfig().getJoinMessage();
                 message = message.replace("{player}", ref.getUsername());
                 if (Config.getConfig().isUseTitles()) {
                     splitAndSendTitle(message.replaceAll("[&§]([0-9a-fk-or])", ""));
@@ -107,12 +107,15 @@ public class BetterJoinPlugin extends JavaPlugin {
 
     private void onPlayerDisconnect(PlayerDisconnectEvent e) {
         if (e.getDisconnectReason().getClientDisconnectType() != null) {
-            String message = Config.getConfig().getLeaveMessage().replace("{player}", e.getPlayerRef().getUsername());
-            if (Config.getConfig().isUseTitles()) {
-                splitAndSendTitle(message.replaceAll("[&§]([0-9a-fk-or])", ""));
-            } else {
-                Universe.get().sendMessage(Colors.formatColorCodes(message));
-            }
+            String username = e.getPlayerRef().getUsername();
+            EXECUTOR.execute(() -> {
+                String message = Config.getConfig().getLeaveMessage().replace("{player}", username);
+                if (Config.getConfig().isUseTitles()) {
+                    splitAndSendTitle(message.replaceAll("[&§]([0-9a-fk-or])", ""));
+                } else {
+                    Universe.get().sendMessage(Colors.formatColorCodes(message));
+                }
+            });
         }
     }
 
@@ -133,6 +136,12 @@ public class BetterJoinPlugin extends JavaPlugin {
                 });
             }
         });
+    }
+
+    @Override
+    protected void shutdown() {
+        SCHEDULED_EXECUTOR.shutdown();
+        EXECUTOR.shutdown();
     }
 
     private ScheduledFuture<Void> schedule(Runnable command, long delay, TimeUnit unit){
