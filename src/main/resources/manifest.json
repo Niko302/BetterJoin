@@ -1,14 +1,14 @@
 {
-    "Group": "GamerDuck123",
-    "Name": "BetterJoin",
-    "Version": "1.0.7",
+    "Group": "Doge",
+    "Name": "DogeJoins",
+    "Version": "1.0.8",
     "Description": "A simple plugin that gives you insane flexibility with welcome, join and leave messages!",
     "Authors": [
         {
             "Name": "GamerDuck123"
         }
     ],
-    "Website": "https://github.com/GamerDuck123/",
+    "Website": "https://github.com/Niko302/BetterJoin",
     "ServerVersion": "*",
     "Dependencies": {
         
